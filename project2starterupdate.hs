@@ -1,3 +1,4 @@
+module Crusher where
 -- CPSC 312 - Project 2
 -- by Khurram Ali Jaffery
 
@@ -21,7 +22,7 @@ data Piece = D | W | B deriving (Eq, Show)
 -- Point is a tuple of 2 elements
 -- representing a point on a grid system
 -- where the first element represents the x coordinate
---       the second element represents the y coordinate
+-- the second element represents the y coordinate
 --
 
 type Point = (Int, Int)
@@ -30,7 +31,7 @@ type Point = (Int, Int)
 -- Tile is a tuple of 2 elements 
 -- representing what a point is occupied by
 -- where the first element represents a piece 
---       the second element represents a point
+-- the second element represents a point
 --
 
 type Tile  = (Piece, Point)
@@ -129,11 +130,11 @@ type Move = (Point,Point)
 run = crusher ["W------------BB-BBB","----W--------BB-BBB","-W-----------BB-BBB"] 'W' 2 3
 grid0 = generateGrid 3 2 4 []
 slides0 = generateSlides grid0 3
-jumps0 = generateLeaps grid0 3
+--jumps0 = generateLeaps grid0 3
 board0 = sTrToBoard "WWW-WW-------BB-BBB"
-newBoards0 = generateNewStates board0 [] grid0 slides0 jumps0 W
-tree0 = generateTree board0 [] grid0 slides0 jumps0 W 4 3
-heuristic0 = boardEvaluator W [] 3
+--newBoards0 = generateNewStates board0 [] grid0 slides0 jumps0 W
+--tree0 = generateTree board0 [] grid0 slides0 jumps0 W 4 3
+--heuristic0 = boardEvaluator W [] 3
 
 --
 -- crusher
@@ -154,7 +155,7 @@ heuristic0 = boardEvaluator W [] 3
 --
 
 crusher :: [String] -> Char -> Int -> Int -> [String]
-crusher (current:old) p d n = -- To Be Completed
+crusher (current:old) p d n = ["A"] -- To Be Completed
 
 --
 -- gameOver
@@ -173,7 +174,7 @@ crusher (current:old) p d n = -- To Be Completed
 --
 
 gameOver :: Board -> [Board] -> Int -> Bool
-gameOver board history n = -- To Be Completed
+gameOver board history n = True -- To Be Completed
 
 --
 -- sTrToBoard
@@ -190,7 +191,7 @@ gameOver board history n = -- To Be Completed
 -- Returns: the Board corresponding to the string
 --
 
-sTrToBoard :: String  -> Board
+sTrToBoard :: String -> Board
 sTrToBoard s = map (\ x -> check x) s
 	where 
 		check 'W' = W
@@ -272,7 +273,32 @@ generateGrid n1 n2 n3 acc
 --
 
 generateSlides :: Grid -> Int -> [Slide]
-generateSlides b n = -- To Be Completed 
+generateSlides b n 
+ | n < 3 = []
+ | otherwise = generateSlidesHelper b b n []
+
+generateSlidesHelper b blist n slist
+ | (length blist) == 0 = slist
+ | otherwise = (addAllSlides b (head blist) [(xpt + 1, ypt),(xpt-1, ypt), (xpt, ypt+1), (xpt, ypt-1), (xpt-1, ypt-1), (xpt+1, ypt+1)] slist) ++ generateSlidesHelper b (tail blist) n slist
+	where
+		xpt = (fst(head blist))
+		ypt = (snd(head blist))
+ 
+addAllSlides b p plist slist 
+ | (length plist) == 0 = slist
+ | (isValidSlideLoc b (head plist)) && ( = addAllSlides b p (tail plist) ((p,(head plist)) : slist)
+ | otherwise = addAllSlides b p (tail plist) slist
+ 
+ 
+isValidSlideLoc b np
+ | (np `elem` b) = True
+ | otherwise = False
+ 
+ 
+ 
+
+
+ -- To Be Completed 
 
 --
 -- generateLeaps
@@ -296,7 +322,7 @@ generateSlides b n = -- To Be Completed
 --
 
 generateLeaps :: Grid -> Int -> [Jump]
-generateLeaps b n = -- To Be Completed
+generateLeaps b n = [] -- To Be Completed
 
 --
 -- stateSearch
@@ -321,8 +347,8 @@ generateLeaps b n = -- To Be Completed
 --          otherwise produces the next best board
 --
 
-stateSearch :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> Int -> Int -> Board
-stateSearch board history grid slides jumps player depth num = -- To Be Completed
+--stateSearch :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> Int -> Int -> Board
+--stateSearch board history grid slides jumps player depth num = -- To Be Completed
 
 --
 -- generateTree
@@ -345,8 +371,8 @@ stateSearch board history grid slides jumps player depth num = -- To Be Complete
 -- Returns: the corresponding BoardTree generated till specified depth
 --
 
-generateTree :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> Int -> Int -> BoardTree
-generateTree board history grid slides jumps player depth n = -- To Be Completed
+--generateTree :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> Int -> Int -> BoardTree
+--generateTree board history grid slides jumps player depth n = -- To Be Completed
 
 --
 -- generateNewStates
@@ -368,7 +394,7 @@ generateTree board history grid slides jumps player depth n = -- To Be Completed
 --
 
 generateNewStates :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> [Board]
-generateNewStates board history grid slides jumps player = -- To Be Completed
+generateNewStates board history grid slides jumps player = [] -- To Be Completed
 
 --
 -- moveGenerator
@@ -398,7 +424,7 @@ generateNewStates board history grid slides jumps player = -- To Be Completed
 --
 
 moveGenerator :: State -> [Slide] -> [Jump] -> Piece -> [Move]
-moveGenerator state slides jumps player = -- To Be Completed										 
+moveGenerator state slides jumps player = [] -- To Be Completed										 
 
 --
 -- boardEvaluator
@@ -420,7 +446,7 @@ moveGenerator state slides jumps player = -- To Be Completed
 --
 
 boardEvaluator :: Piece -> [Board] -> Int -> Board -> Bool -> Int
-boardEvaluator player history n board myTurn = -- To Be Completed
+boardEvaluator player history n board myTurn = 0 -- To Be Completed
 
 --
 -- minimax
@@ -438,8 +464,8 @@ boardEvaluator player history n board myTurn = -- To Be Completed
 -- Returns: the next best board
 --
 
-minimax :: BoardTree -> (Board -> Bool -> Int) -> Board
-minimax (Node _ b children) heuristic = -- To Be Completed
+--minimax :: BoardTree -> (Board -> Bool -> Int) -> Board
+--minimax (Node _ b children) heuristic = -- To Be Completed
 
 --
 -- minimax'
@@ -463,6 +489,6 @@ minimax (Node _ b children) heuristic = -- To Be Completed
 --
 
 minimax' :: BoardTree -> (Board -> Bool -> Int) -> Bool -> Int
-minimax' boardTree heuristic maxPlayer = -- To Be Completed
+minimax' boardTree heuristic maxPlayer = 0 -- To Be Completed
 
 
