@@ -448,9 +448,28 @@ generateLeaps b n = [] -- To Be Completed
 -- Returns: the list of all valid moves that the player could make
 --
 
---moveGenerator :: State -> [Slide] -> [Jump] -> Piece -> [Move]
---moveGenerator state slides jumps player = [] -- To Be Completed										 
+moveGenerator :: State -> [Slide] -> [Jump] -> Piece -> [Move]
+moveGenerator state slides jumps player =
+	foldl (\acc x -> if fst x == player then (validMoves (snd x) slides jumps) ++ acc else acc) [] state
 
+validMoves :: Point -> [Slide] -> [Jump] -> [Move]
+validMoves p slides jumps =
+	(validSlides p slides) ++ (validJumps p jumps)
+	where
+		validSlides _ [] = []
+		validSlides p ((a,b):slds)
+		  | a == p && (find_in_state b state) == D = (p,b):validSlides p slds
+			| otherwise = validSlides p slds
+
+		validJumps _ [] = []
+		validJumps p ((a,b,c):jmps)
+		  | a == p && (find_in_state c state) /= player = (p,c):validJumps p jmps
+			| otherwise = validJumps p jmps
+
+find_in_state _ [] = []
+find_in_state pt1 ((pc,pt):tls) =
+	| pt1 == pt = pc
+	| otherwise = find_in_state pt1 tls
 --
 -- boardEvaluator
 --
