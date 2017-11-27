@@ -173,8 +173,8 @@ crusher (current:old) p d n = ["A"] -- To Be Completed
 -- Returns: True if the board is in a state where the game has ended, otherwise False
 --
 
-gameOver :: Board -> [Board] -> Int -> Bool
-gameOver board history n = True -- To Be Completed
+--gameOver :: Board -> [Board] -> Int -> Bool
+--gameOver board history n = True -- To Be Completed
 
 --
 -- sTrToBoard
@@ -286,7 +286,7 @@ generateSlidesHelper b blist n slist
  
 addAllSlides b p plist slist 
  | (length plist) == 0 = slist
- | (isValidSlideLoc b (head plist)) && ( = addAllSlides b p (tail plist) ((p,(head plist)) : slist)
+ | (isValidSlideLoc b (head plist)) = addAllSlides b p (tail plist) ((p,(head plist)) : slist)
  | otherwise = addAllSlides b p (tail plist) slist
  
  
@@ -393,8 +393,30 @@ generateLeaps b n = [] -- To Be Completed
 -- Returns: the list of next boards
 --
 
-generateNewStates :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> [Board]
-generateNewStates board history grid slides jumps player = [] -- To Be Completed
+--generateNewStates :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> [Board]
+--generateNewStates board history grid []	[] player = [board]
+--generateNewStates board history grid slides jumps player = (filterSlides board grid slides player []) ++ (filterJumps board jumps player [])
+
+
+--filterSlides board grid slides player flist
+-- | (length slides) == 0 = flist
+-- | (validMove h board grid player) = filterSlides board grid (tail slides) player ((head slides) : flist)
+-- | otherwise = filterSlides board grid (tail slides) player flist
+ 
+--filterJumps board grid jumps player flist
+-- | (length jumps) == 0 = flist
+-- | (validMove h board grid player) = filterJumps board grid (tail jumps) player ((head jumps) : flist)
+-- | otherwise = filterJumps board grid (tail jumps) player flist
+ 
+
+--validSlide mv board grid player
+-- | player == W = 
+
+
+
+--validJump
+
+--[] -- To Be Completed
 
 --
 -- moveGenerator
@@ -423,8 +445,8 @@ generateNewStates board history grid slides jumps player = [] -- To Be Completed
 -- Returns: the list of all valid moves that the player could make
 --
 
-moveGenerator :: State -> [Slide] -> [Jump] -> Piece -> [Move]
-moveGenerator state slides jumps player = [] -- To Be Completed										 
+--moveGenerator :: State -> [Slide] -> [Jump] -> Piece -> [Move]
+--moveGenerator state slides jumps player = [] -- To Be Completed										 
 
 --
 -- boardEvaluator
@@ -445,8 +467,8 @@ moveGenerator state slides jumps player = [] -- To Be Completed
 -- Returns: the goodness value of the provided board
 --
 
-boardEvaluator :: Piece -> [Board] -> Int -> Board -> Bool -> Int
-boardEvaluator player history n board myTurn = 0 -- To Be Completed
+--boardEvaluator :: Piece -> [Board] -> Int -> Board -> Bool -> Int
+--boardEvaluator player history n board myTurn = 0 -- To Be Completed
 
 --
 -- minimax
@@ -488,7 +510,7 @@ boardEvaluator player history n board myTurn = 0 -- To Be Completed
 -- Returns: the minimax value at the top of the tree
 --
 
-minimax' :: BoardTree -> (Board -> Bool -> Int) -> Bool -> Int
-minimax' boardTree heuristic maxPlayer = 0 -- To Be Completed
+--minimax' :: BoardTree -> (Board -> Bool -> Int) -> Bool -> Int
+--minimax' boardTree heuristic maxPlayer = 0 -- To Be Completed
 
 
