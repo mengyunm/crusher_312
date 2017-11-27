@@ -279,10 +279,13 @@ generateSlides b n
 
 generateSlidesHelper b blist n slist
  | (length blist) == 0 = slist
- | otherwise = (addAllSlides b (head blist) [(xpt + 1, ypt),(xpt-1, ypt), (xpt, ypt+1), (xpt, ypt-1), (xpt-1, ypt-1), (xpt+1, ypt+1)] slist) ++ generateSlidesHelper b (tail blist) n slist
+ | ypt < n = (addAllSlides b (head blist) [(xpt + 1, ypt),(xpt-1, ypt), (xpt, ypt+1), (xpt, ypt-1), (xpt-1, ypt-1), (xpt+1, ypt+1)] slist) ++ generateSlidesHelper b (tail blist) n slist
+ | ypt == n = (addAllSlides b (head blist) [(xpt + 1, ypt),(xpt-1, ypt), (xpt, ypt+1), (xpt, ypt-1), (xpt-1, ypt-1), (xpt-1, ypt+1)] slist) ++ generateSlidesHelper b (tail blist) n slist
+ | ypt > n = (addAllSlides b (head blist) [(xpt + 1, ypt),(xpt-1, ypt), (xpt, ypt+1), (xpt, ypt-1), (xpt+1, ypt-1), (xpt-1, ypt+1)] slist) ++ generateSlidesHelper b (tail blist) n slist
 	where
 		xpt = (fst(head blist))
 		ypt = (snd(head blist))
+
  
 addAllSlides b p plist slist 
  | (length plist) == 0 = slist
