@@ -574,6 +574,8 @@ minimax (Node _ b children) heuristic =
 	let listofscores = (map (\bt -> minimax' bt heuristic False) children)
 	in findNextBoard (findMax listofscores) (zip children listofscores)
 
+-- Since the designed player is MaxPlayer, find the next board with max score
+-- findNextBoard find the board in children with ma =x score
 findNextBoard :: Int -> [(BoardTree, Int)] -> Board
 findNextBoard maxscore (((Node _ b _),s):rest)
 	| s == maxscore = b
@@ -601,10 +603,16 @@ findNextBoard maxscore (((Node _ b _),s):rest)
 --
 
 minimax' :: BoardTree -> (Board -> Bool -> Int) -> Bool -> Int
+-- base case is a Leaf -> (Node _ _ [])
+-- heuristic is boardEvaluator player history n
+-- thus need myTurn and board -> maxPlayer and board here
 minimax' (Node _ board []) heuristic maxPlayer = heuristic board maxPlayer
 minimax' (Node _ board nextboards) heuristic maxPlayer
+-- at each depth the player is (...Max Min Max Min...)
 	| maxPlayer = findMax (map (\bt -> minimax' bt heuristic False) nextboards)
 	| otherwise =  findMin (map (\bt -> minimax' bt heuristic True) nextboards)
 
+findMax :: [Int] -> Int
 findMax lst = foldl (\acc x -> if x > acc then x else acc) (head lst) lst
+findMin :: [Int] -> Int
 findMin lst = foldl (\acc x -> if x < acc then x else acc) (head lst) lst
