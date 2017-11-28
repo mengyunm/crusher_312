@@ -568,8 +568,16 @@ opponent player
 -- Returns: the next best board
 --
 
---minimax :: BoardTree -> (Board -> Bool -> Int) -> Board
---minimax (Node _ b children) heuristic = -- To Be Completed
+minimax :: BoardTree -> (Board -> Bool -> Int) -> Board
+minimax (Node _ b []) heuristic = b
+minimax (Node _ b children) heuristic =
+	let listofscores = (map (\bt -> minimax' bt heuristic False) children)
+	in findNextBoard (findMax listofscores) (zip children listofscores)
+
+findNextBoard :: Int -> [(BoardTree, Int)] -> Board
+findNextBoard maxscore (((Node _ b boardtrees),s):rest)
+	| s == maxscore = b
+	| otherwise = findNextBoard maxscore rest
 
 --
 -- minimax'
@@ -592,5 +600,11 @@ opponent player
 -- Returns: the minimax value at the top of the tree
 --
 
---minimax' :: BoardTree -> (Board -> Bool -> Int) -> Bool -> Int
---minimax' boardTree heuristic maxPlayer = 0 -- To Be Completed
+minimax' :: BoardTree -> (Board -> Bool -> Int) -> Bool -> Int
+minimax' (Node _ board []) heuristic maxPlayer = heuristic board maxPlayer
+minimax' (Node _ board nextboards) heuristic maxPlayer
+	| maxPlayer = findMax (map (\bt -> minimax' bt heuristic False) nextboards)
+	| otherwise =  findMin (map (\bt -> minimax' bt heuristic True) nextboards)
+
+findMax lst = foldl (\acc x -> if x > acc then x else acc) (head lst) lst
+findMin lst = foldl (\acc x -> if x < acc then x else acc) (head lst) lst
