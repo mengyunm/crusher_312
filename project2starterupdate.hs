@@ -364,8 +364,11 @@ generateLeaps b n =
 --          otherwise produces the next best board
 --
 
---stateSearch :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> Int -> Int -> Board
---stateSearch board history grid slides jumps player depth num = -- To Be Completed
+stateSearch :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> Int -> Int -> Board
+stateSearch board history grid slides jumps player depth num
+    | (gameOver board history num) = board
+-- use next line when boardEvaluator works
+--     | otherwise = minimax (generateTree board history grid slides jumps player depth num) (boardEvaluator player history num board true)
 
 --
 -- generateTree
