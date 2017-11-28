@@ -325,7 +325,16 @@ isValidSlideLoc b np
 --
 
 generateLeaps :: Grid -> Int -> [Jump]
-generateLeaps b n = [] -- To Be Completed
+generateLeaps b n =
+	foldl (\acc e -> acc ++ (filter (check b) (generate e))) [] b
+  where
+	  generate (x,y)
+		  | y < n-2 = [((x,y),(x-1,y-1),(x-2,y-2)),((x,y),(x,y-1),(x,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x,y+1),(x,y+2)),((x,y),(x+1,y+1),(x+2,y+2))]
+		  | y == n-2 = [((x,y),(x-1,y-1),(x-2,y-2)),((x,y),(x,y-1),(x,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x,y+1),(x-1,y+2)),((x,y),(x+1,y+1),(x+1,y+2))]
+		  | y == n-1 = [((x,y),(x-1,y-1),(x-2,y-2)),((x,y),(x,y-1),(x,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x-1,y+1),(x-2,y+2)),((x,y),(x,y+1),(x,y+2))]
+		  | y == n = [((x,y),(x,y-1),(x-1,y-2)),((x,y),(x+1,y-1),(x+1,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x-1,y+1),(x-2,y+2)),((x,y),(x,y+1),(x,y+2))]
+			|otherwise = [((x,y),(x,y-1),(x,y-2)),((x,y),(x+1,y-1),(x+2,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x-1,y+1),(x-2,y+2)),((x,y),(x,y+1),(x,y+2))]
+	  check b (_,_,(x,y)) = (x,y) `elem` b
 
 --
 -- stateSearch
@@ -450,24 +459,24 @@ generateLeaps b n = [] -- To Be Completed
 
 moveGenerator :: State -> [Slide] -> [Jump] -> Piece -> [Move]
 moveGenerator state slides jumps player =
-	foldl (\acc x -> if fst x == player then (validMoves (snd x) slides jumps) ++ acc else acc) [] state
+	foldl (\acc x -> if fst x == player then (validMoves (snd x) slides jumps player state) ++ acc else acc) [] state
 
-validMoves :: Point -> [Slide] -> [Jump] -> [Move]
-validMoves p slides jumps =
+validMoves :: Point -> [Slide] -> [Jump] -> Piece -> State -> [Move]
+validMoves p slides jumps player state =
 	(validSlides p slides) ++ (validJumps p jumps)
-	where
-		validSlides _ [] = []
-		validSlides p ((a,b):slds)
-		  | a == p && (find_in_state b state) == D = (p,b):validSlides p slds
-			| otherwise = validSlides p slds
+	 where
+		 validSlides _ [] = []
+		 validSlides p ((a,b):slds)
+		   | a == p && (find_in_state b state) == D = (p,b):validSlides p slds
+			 | otherwise = validSlides p slds
 
-		validJumps _ [] = []
-		validJumps p ((a,b,c):jmps)
-		  | a == p && (find_in_state c state) /= player = (p,c):validJumps p jmps
-			| otherwise = validJumps p jmps
+		 validJumps _ [] = []
+		 validJumps p ((a,b,c):jmps)
+		   | a == p && (find_in_state b state) == player && (find_in_state c state) /= player = (p,c):validJumps p jmps
+			 | otherwise = validJumps p jmps
 
-find_in_state _ [] = []
-find_in_state pt1 ((pc,pt):tls) =
+find_in_state :: Point -> State -> Piece
+find_in_state pt1 ((pc,pt):tls)
 	| pt1 == pt = pc
 	| otherwise = find_in_state pt1 tls
 --
