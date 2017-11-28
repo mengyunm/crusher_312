@@ -575,7 +575,7 @@ minimax (Node _ b children) heuristic =
 	in findNextBoard (findMax listofscores) (zip children listofscores)
 
 findNextBoard :: Int -> [(BoardTree, Int)] -> Board
-findNextBoard maxscore (((Node _ b boardtrees),s):rest)
+findNextBoard maxscore (((Node _ b _),s):rest)
 	| s == maxscore = b
 	| otherwise = findNextBoard maxscore rest
 
