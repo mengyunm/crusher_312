@@ -179,7 +179,9 @@ gameOver board history n
     | count W board < n = True
     | board `elem` history = True
     | otherwise = False
-    where count c board = foldl (\acc x -> if x == c then acc+1 else acc) 0 board
+
+count :: Piece -> Board -> Int
+count pc b = foldl (\acc x -> if x == pc then acc+1 else acc) 0 b
 
 --
 -- sTrToBoard
@@ -540,13 +542,10 @@ find_in_state pt1 ((pc,pt):tls)
 
 boardEvaluator :: Piece -> [Board] -> Int -> Board -> Bool -> Int
 boardEvaluator player history n board myTurn
-	| myTurn && gameOver board history n = 2*n-1 -- lose
-	| not myTurn && gameOver board history n = 2*n-1 -- win
+	| myTurn && gameOver board history n = - 10000*n -- lose
+	| not myTurn && gameOver board history n = 10000*n -- win
 	| myTurn && not (gameOver board history n) = (count player board) - (count (opponent player) board)
 	| otherwise = (count (opponent player) board) - (count player board)
-
-count :: Piece -> Board -> Int
-count pc b = foldl (\acc x -> if x == pc then acc+1 else acc) 0 b
 
 opponent :: Piece -> Piece
 opponent player
