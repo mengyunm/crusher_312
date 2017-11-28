@@ -175,11 +175,11 @@ crusher (current:old) p d n = ["A"] -- To Be Completed
 
 gameOver :: Board -> [Board] -> Int -> Bool
 gameOver board history n
-	| count B board < n = True
-	| count W board < n = True
-	| board `elem` history = True
-	| otherwise = False
-	where count c board = foldl (\acc x -> if x == c then acc+1 else acc) 0 board
+    | count B board < n = True
+    | count W board < n = True
+    | board `elem` history = True
+    | otherwise = False
+    where count c board = foldl (\acc x -> if x == c then acc+1 else acc) 0 board
 
 --
 -- sTrToBoard
@@ -251,8 +251,8 @@ boardToStr b = map (\ x -> check x) b
 
 generateGrid :: Int -> Int -> Int -> Grid -> Grid
 generateGrid n1 n2 n3 acc 
-    | n3 == -1	    = acc
-	| otherwise     = generateGrid nn1 (n2 - 1) (n3 - 1) (row ++ acc)
+    | n3 == -1      = acc
+    | otherwise     = generateGrid nn1 (n2 - 1) (n3 - 1) (row ++ acc)
         where
             row = map (\ x -> (x,n3)) [0 .. (n1 - 1)]
             nn1 = if n2 > 0 then n1 + 1 else n1 - 1
@@ -338,7 +338,7 @@ generateLeaps b n =
           | y == n-2 = [((x,y),(x-1,y-1),(x-2,y-2)),((x,y),(x,y-1),(x,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x,y+1),(x-1,y+2)),((x,y),(x+1,y+1),(x+1,y+2))]
           | y == n-1 = [((x,y),(x-1,y-1),(x-2,y-2)),((x,y),(x,y-1),(x,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x-1,y+1),(x-2,y+2)),((x,y),(x,y+1),(x,y+2))]
           | y == n = [((x,y),(x,y-1),(x-1,y-2)),((x,y),(x+1,y-1),(x+1,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x-1,y+1),(x-2,y+2)),((x,y),(x,y+1),(x,y+2))]
-        	|otherwise = [((x,y),(x,y-1),(x,y-2)),((x,y),(x+1,y-1),(x+2,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x-1,y+1),(x-2,y+2)),((x,y),(x,y+1),(x,y+2))]
+          |otherwise = [((x,y),(x,y-1),(x,y-2)),((x,y),(x+1,y-1),(x+2,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x-1,y+1),(x-2,y+2)),((x,y),(x,y+1),(x,y+2))]
       check b (_,_,(x,y)) = (x,y) `elem` b
 
 --
@@ -441,7 +441,7 @@ generateNewStates board history grid slides jumps player = -- To Be Completed
             move = (moveGenerator state slides jumps player)
             -- we need state
             state = (getState grid board)
-			
+
 -- check valid
 checkBoard :: [Board] -> [Board] -> [Board]
 checkBoard board history = [b | b <- board, (not (b `elem` history))]
@@ -453,8 +453,7 @@ checkBoard board history = [b | b <- board, (not (b `elem` history))]
 -- --     if player = W chooses it's piece for example (W,(0,0)) and moves to a new location on board/grid
 -- --	  the new state of the board will change (D, (0,0)) and add (W, to a new point)
 nextBoard :: State -> [Move] -> Piece -> [Board]
-nextBoard state move player =
-	[]
+nextBoard state move player = []
 
 -- notes for getState:
 -- -- list of Tile = (Piece, Point)
@@ -508,12 +507,13 @@ validMoves p slides jumps player state =
      where
          validSlides _ [] = []
          validSlides p ((a,b):slds)
-            | a == p && (find_in_state b state) == D = (p,b):validSlides p slds
-            | otherwise = validSlides p slds
-		 validJumps _ [] = []
+           | a == p && (find_in_state b state) == D = (p,b):validSlides p slds
+             | otherwise = validSlides p slds
+
+         validJumps _ [] = []
          validJumps p ((a,b,c):jmps)
-            | a == p && (find_in_state b state) == player && (find_in_state c state) /= player = (p,c):validJumps p jmps
-            | otherwise = validJumps p jmps
+           | a == p && (find_in_state b state) == player && (find_in_state c state) /= player = (p,c):validJumps p jmps
+             | otherwise = validJumps p jmps
 
 find_in_state :: Point -> State -> Piece
 find_in_state pt1 ((pc,pt):tls)
