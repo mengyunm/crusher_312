@@ -173,8 +173,13 @@ crusher (current:old) p d n = ["A"] -- To Be Completed
 -- Returns: True if the board is in a state where the game has ended, otherwise False
 --
 
---gameOver :: Board -> [Board] -> Int -> Bool
---gameOver board history n = True -- To Be Completed
+gameOver :: Board -> [Board] -> Int -> Bool
+gameOver board history n
+	| count B board < n = True
+	| count W board < n = True
+	| board `elem` history = True
+	| otherwise = False
+	where count c board = foldl (\acc x -> if x == c then acc+1 else acc) 0 board
 
 --
 -- sTrToBoard
@@ -193,10 +198,10 @@ crusher (current:old) p d n = ["A"] -- To Be Completed
 
 sTrToBoard :: String -> Board
 sTrToBoard s = map (\ x -> check x) s
-	where 
-		check 'W' = W
-		check 'B' = B
-		check '-' = D
+    where 
+        check 'W' = W
+        check 'B' = B
+        check '-' = D
 
 --
 -- boardToStr
@@ -215,10 +220,10 @@ sTrToBoard s = map (\ x -> check x) s
 
 boardToStr :: Board -> String
 boardToStr b = map (\ x -> check x) b
-	where 
-		check W = 'W'
-		check B = 'B'
-		check D = '-'
+    where 
+        check W = 'W'
+        check B = 'B'
+        check D = '-'
 
 --
 -- generateGrid
@@ -246,11 +251,11 @@ boardToStr b = map (\ x -> check x) b
 
 generateGrid :: Int -> Int -> Int -> Grid -> Grid
 generateGrid n1 n2 n3 acc 
-	| n3 == -1		= acc
-	| otherwise 	= generateGrid nn1 (n2 - 1) (n3 - 1) (row ++ acc)
-		where
-			row = map (\ x -> (x,n3)) [0 .. (n1 - 1)]
-			nn1 = if n2 > 0 then n1 + 1 else n1 - 1
+    | n3 == -1	    = acc
+	| otherwise     = generateGrid nn1 (n2 - 1) (n3 - 1) (row ++ acc)
+        where
+            row = map (\ x -> (x,n3)) [0 .. (n1 - 1)]
+            nn1 = if n2 > 0 then n1 + 1 else n1 - 1
 
 --
 -- generateSlides
@@ -282,9 +287,9 @@ generateSlidesHelper b blist n slist
  | ypt < n = (addAllSlides b (head blist) [(xpt + 1, ypt),(xpt-1, ypt), (xpt, ypt+1), (xpt, ypt-1), (xpt-1, ypt-1), (xpt+1, ypt+1)] slist) ++ generateSlidesHelper b (tail blist) n slist
  | ypt == n = (addAllSlides b (head blist) [(xpt + 1, ypt),(xpt-1, ypt), (xpt, ypt+1), (xpt, ypt-1), (xpt-1, ypt-1), (xpt-1, ypt+1)] slist) ++ generateSlidesHelper b (tail blist) n slist
  | ypt > n = (addAllSlides b (head blist) [(xpt + 1, ypt),(xpt-1, ypt), (xpt, ypt+1), (xpt, ypt-1), (xpt+1, ypt-1), (xpt-1, ypt+1)] slist) ++ generateSlidesHelper b (tail blist) n slist
-	where
-		xpt = (fst(head blist))
-		ypt = (snd(head blist))
+    where
+        xpt = (fst(head blist))
+        ypt = (snd(head blist))
 
  
 addAllSlides b p plist slist 
@@ -326,15 +331,15 @@ isValidSlideLoc b np
 
 generateLeaps :: Grid -> Int -> [Jump]
 generateLeaps b n =
-	foldl (\acc e -> acc ++ (filter (check b) (generate e))) [] b
+    foldl (\acc e -> acc ++ (filter (check b) (generate e))) [] b
   where
-	  generate (x,y)
-		  | y < n-2 = [((x,y),(x-1,y-1),(x-2,y-2)),((x,y),(x,y-1),(x,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x,y+1),(x,y+2)),((x,y),(x+1,y+1),(x+2,y+2))]
-		  | y == n-2 = [((x,y),(x-1,y-1),(x-2,y-2)),((x,y),(x,y-1),(x,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x,y+1),(x-1,y+2)),((x,y),(x+1,y+1),(x+1,y+2))]
-		  | y == n-1 = [((x,y),(x-1,y-1),(x-2,y-2)),((x,y),(x,y-1),(x,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x-1,y+1),(x-2,y+2)),((x,y),(x,y+1),(x,y+2))]
-		  | y == n = [((x,y),(x,y-1),(x-1,y-2)),((x,y),(x+1,y-1),(x+1,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x-1,y+1),(x-2,y+2)),((x,y),(x,y+1),(x,y+2))]
-			|otherwise = [((x,y),(x,y-1),(x,y-2)),((x,y),(x+1,y-1),(x+2,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x-1,y+1),(x-2,y+2)),((x,y),(x,y+1),(x,y+2))]
-	  check b (_,_,(x,y)) = (x,y) `elem` b
+      generate (x,y)
+          | y < n-2 = [((x,y),(x-1,y-1),(x-2,y-2)),((x,y),(x,y-1),(x,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x,y+1),(x,y+2)),((x,y),(x+1,y+1),(x+2,y+2))]
+          | y == n-2 = [((x,y),(x-1,y-1),(x-2,y-2)),((x,y),(x,y-1),(x,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x,y+1),(x-1,y+2)),((x,y),(x+1,y+1),(x+1,y+2))]
+          | y == n-1 = [((x,y),(x-1,y-1),(x-2,y-2)),((x,y),(x,y-1),(x,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x-1,y+1),(x-2,y+2)),((x,y),(x,y+1),(x,y+2))]
+          | y == n = [((x,y),(x,y-1),(x-1,y-2)),((x,y),(x+1,y-1),(x+1,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x-1,y+1),(x-2,y+2)),((x,y),(x,y+1),(x,y+2))]
+        	|otherwise = [((x,y),(x,y-1),(x,y-2)),((x,y),(x+1,y-1),(x+2,y-2)),((x,y),(x-1,y),(x-2,y)),((x,y),(x+1,y),(x+2,y)),((x,y),(x-1,y+1),(x-2,y+2)),((x,y),(x,y+1),(x,y+2))]
+      check b (_,_,(x,y)) = (x,y) `elem` b
 
 --
 -- stateSearch
@@ -424,7 +429,40 @@ generateLeaps b n =
 --validSlide mv board grid player
 -- | player == W = 
 
+generateNewStates :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> [Board]
+generateNewStates board history grid slides jumps player = -- To Be Completed
+-- applies moves to the current board to generate a list of next boards
+    checkBoard (nextBoard state move player) history
+        where
+            -- need to generates a list of valud move
+            move = (moveGenerator state slides jumps player)
+            -- we need state
+            state = (getState grid board)
+			
+-- check valid
+checkBoard :: [Board] -> [Board] -> [Board]
+checkBoard board history = [b | b <- board, (not (b `elem` history))]
 
+-- we need a new board after player makes the move
+-- state: the point of each piece change 
+-- -- the changes have made:
+-- --     player = Piece [W | B]
+-- --     if player = W chooses it's piece for example (W,(0,0)) and moves to a new location on board/grid
+-- --	  the new state of the board will change (D, (0,0)) and add (W, to a new point)
+nextBoard :: State -> [Move] -> Piece -> [Board]
+nextBoard state move player =
+	[]
+
+-- notes for getState:
+-- -- list of Tile = (Piece, Point)
+-- -- zipping the board and the grid together
+-- -- keep easier track of the effects on the pieces of making moves on grid
+-- -- Board -> [piece]
+-- -- Grid -> [point]
+getState :: Grid -> Board -> State
+getState _ [] = []
+getState [] _ = []
+getState (point:gpr) (piece:bpr) = (piece, point): getState gpr bpr
 
 --validJump
 
@@ -459,26 +497,25 @@ generateLeaps b n =
 
 moveGenerator :: State -> [Slide] -> [Jump] -> Piece -> [Move]
 moveGenerator state slides jumps player =
-	foldl (\acc x -> if fst x == player then (validMoves (snd x) slides jumps player state) ++ acc else acc) [] state
+    foldl (\acc x -> if fst x == player then (validMoves (snd x) slides jumps player state) ++ acc else acc) [] state
 
 validMoves :: Point -> [Slide] -> [Jump] -> Piece -> State -> [Move]
 validMoves p slides jumps player state =
-	(validSlides p slides) ++ (validJumps p jumps)
-	 where
-		 validSlides _ [] = []
-		 validSlides p ((a,b):slds)
-		   | a == p && (find_in_state b state) == D = (p,b):validSlides p slds
-			 | otherwise = validSlides p slds
-
+    (validSlides p slides) ++ (validJumps p jumps)
+     where
+         validSlides _ [] = []
+         validSlides p ((a,b):slds)
+            | a == p && (find_in_state b state) == D = (p,b):validSlides p slds
+            | otherwise = validSlides p slds
 		 validJumps _ [] = []
-		 validJumps p ((a,b,c):jmps)
-		   | a == p && (find_in_state b state) == player && (find_in_state c state) /= player = (p,c):validJumps p jmps
-			 | otherwise = validJumps p jmps
+         validJumps p ((a,b,c):jmps)
+            | a == p && (find_in_state b state) == player && (find_in_state c state) /= player = (p,c):validJumps p jmps
+            | otherwise = validJumps p jmps
 
 find_in_state :: Point -> State -> Piece
 find_in_state pt1 ((pc,pt):tls)
-	| pt1 == pt = pc
-	| otherwise = find_in_state pt1 tls
+    | pt1 == pt = pc
+    | otherwise = find_in_state pt1 tls
 --
 -- boardEvaluator
 --
