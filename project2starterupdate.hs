@@ -540,14 +540,10 @@ find_in_state pt1 ((pc,pt):tls)
 
 boardEvaluator :: Piece -> [Board] -> Int -> Board -> Bool -> Int
 boardEvaluator player history n board myTurn
-	| myTurn = eval player board n
-	| otherwise = - (eval player board n)
-
-eval :: Piece -> Board -> Int -> Int
-eval player board n
-	| (count player board) < n = -(2*n-1) -- lose
-	| (count (opponent player) board) < n = (2*n-1) -- win
-	| otherwise = (count player board) - (count (opponent player) board)
+	| myTurn && gameOver board history n = 2*n-1 -- lose
+	| not myTurn && gameOver board history n = 2*n-1 -- win
+	| myTurn && not (gameOver board history n) = (count player board) - (count (opponent player) board)
+	| otherwise = (count (opponent player) board) - (count player board)
 
 count :: Piece -> Board -> Int
 count pc b = foldl (\acc x -> if x == pc then acc+1 else acc) 0 b
