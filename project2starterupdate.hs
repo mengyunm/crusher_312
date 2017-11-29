@@ -159,7 +159,8 @@ crusher (current:old) p d n =
     ((boardToStr nextboard):current:old)
     where
         nextboard = stateSearch (sTrToBoard current) (toHistory old) grid (generateSlides grid n) (generateLeaps grid n) (toPlayer p) d n
-        grid = (generateGrid n (n-1) (2*(n-1)) [])
+          where
+              grid = (generateGrid n (n-1) (2*(n-1)) [])
 
 -- history is a list of Board, old is a list of string, old -> history
 toHistory :: [String] -> [Board]
@@ -404,7 +405,7 @@ generateTree board history grid slides jumps player depth n = generateTreeHelper
 generateTreeHelper board history grid slides jumps player depth currDepth n
  | (currDepth == depth) = (Node currDepth board [])
  | (gameOver board history n) = (Node currDepth board [])
- | otherwise = (Node currDepth board childNodes) 
+ | otherwise = (Node currDepth board childNodes)
     where childNodes =  [generateTreeHelper x (board:history) grid slides jumps player depth (currDepth + 1) n | x <- (generateNewStates board history grid slides jumps player)]
 
 --
