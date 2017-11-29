@@ -369,8 +369,6 @@ generateLeaps b n =
 stateSearch :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> Int -> Int -> Board
 stateSearch board history grid slides jumps player depth num
     | (gameOver board history num) = board
--- use next line when boardEvaluator works
---     | otherwise = minimax (generateTree board history grid slides jumps player depth num) (boardEvaluator player history num board true)
 
 --
 -- generateTree
@@ -542,15 +540,15 @@ find_in_state pt1 ((pc,pt):tls)
 
 boardEvaluator :: Piece -> [Board] -> Int -> Board -> Bool -> Int
 boardEvaluator player history n board myTurn
-	| myTurn && gameOver board history n = - 10000*n -- lose
-	| not myTurn && gameOver board history n = 10000*n -- win
-	| myTurn && not (gameOver board history n) = (count player board) - (count (opponent player) board)
-	| otherwise = (count (opponent player) board) - (count player board)
+    | myTurn && gameOver board history n = - 10000*n -- lose
+    | not myTurn && gameOver board history n = 10000*n -- win
+    | myTurn && not (gameOver board history n) = (count player board) - (count (opponent player) board)
+    | otherwise = (count (opponent player) board) - (count player board)
 
 opponent :: Piece -> Piece
 opponent player
   | player == B = W
-	| otherwise = B
+    | otherwise = B
 
 --
 -- minimax
@@ -571,15 +569,15 @@ opponent player
 minimax :: BoardTree -> (Board -> Bool -> Int) -> Board
 minimax (Node _ b []) heuristic = b
 minimax (Node _ b children) heuristic =
-	let listofscores = (map (\bt -> minimax' bt heuristic False) children)
-	in findNextBoard (findMax listofscores) (zip children listofscores)
+    let listofscores = (map (\bt -> minimax' bt heuristic False) children)
+    in findNextBoard (findMax listofscores) (zip children listofscores)
 
 -- Since the designed player is MaxPlayer, find the next board with max score
 -- findNextBoard find the board in children with ma =x score
 findNextBoard :: Int -> [(BoardTree, Int)] -> Board
 findNextBoard maxscore (((Node _ b _),s):rest)
-	| s == maxscore = b
-	| otherwise = findNextBoard maxscore rest
+    | s == maxscore = b
+    | otherwise = findNextBoard maxscore rest
 
 --
 -- minimax'
@@ -609,8 +607,8 @@ minimax' :: BoardTree -> (Board -> Bool -> Int) -> Bool -> Int
 minimax' (Node _ board []) heuristic maxPlayer = heuristic board maxPlayer
 minimax' (Node _ board nextboards) heuristic maxPlayer
 -- at each depth the player is (...Max Min Max Min...)
-	| maxPlayer = findMax (map (\bt -> minimax' bt heuristic False) nextboards)
-	| otherwise =  findMin (map (\bt -> minimax' bt heuristic True) nextboards)
+    | maxPlayer = findMax (map (\bt -> minimax' bt heuristic False) nextboards)
+    | otherwise =  findMin (map (\bt -> minimax' bt heuristic True) nextboards)
 
 findMax :: [Int] -> Int
 findMax lst = foldl (\acc x -> if x > acc then x else acc) (head lst) lst
