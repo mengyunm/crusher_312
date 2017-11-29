@@ -368,9 +368,11 @@ generateLeaps b n =
 
 stateSearch :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> Int -> Int -> Board
 stateSearch board history grid slides jumps player depth num
-    | (gameOver board history num) = board
--- use next line when boardEvaluator works
---     | otherwise = minimax (generateTree board history grid slides jumps player depth num) (boardEvaluator player history num board true)
+	| gameOver board history num = board
+	| depth == 0 = board
+	-- heuristic is boardEvaluator with partial arguments, -> player history n
+	| otherwise minimax (generateTree board history grid slides jumps players depth num) (boardEvaluator player history n)
+
 
 --
 -- generateTree
@@ -571,11 +573,12 @@ opponent player
 minimax :: BoardTree -> (Board -> Bool -> Int) -> Board
 minimax (Node _ b []) heuristic = b
 minimax (Node _ b children) heuristic =
+  -- listofscores is a list of scores of boards in children
 	let listofscores = (map (\bt -> minimax' bt heuristic False) children)
 	in findNextBoard (findMax listofscores) (zip children listofscores)
 
 -- Since the designed player is MaxPlayer, find the next board with max score
--- findNextBoard find the board in children with ma =x score
+-- findNextBoard find the board in children with max score
 findNextBoard :: Int -> [(BoardTree, Int)] -> Board
 findNextBoard maxscore (((Node _ b _),s):rest)
 	| s == maxscore = b
@@ -603,12 +606,15 @@ findNextBoard maxscore (((Node _ b _),s):rest)
 --
 
 minimax' :: BoardTree -> (Board -> Bool -> Int) -> Bool -> Int
--- base case is a Leaf -> (Node _ _ [])
+-- base case is a Leaf -> (Node _ _ []), just use heuristic to calculate its score
 -- heuristic is boardEvaluator player history n
 -- thus need myTurn and board -> maxPlayer and board here
 minimax' (Node _ board []) heuristic maxPlayer = heuristic board maxPlayer
 minimax' (Node _ board nextboards) heuristic maxPlayer
 -- at each depth the player is (...Max Min Max Min...)
+-- each Board's score is the max score of its children(nextboars) when its maxPlayer's turn,
+-- or the min score of its children at minPlayer's turn
+-- only leaves are calculated by heuristic
 	| maxPlayer = findMax (map (\bt -> minimax' bt heuristic False) nextboards)
 	| otherwise =  findMin (map (\bt -> minimax' bt heuristic True) nextboards)
 
