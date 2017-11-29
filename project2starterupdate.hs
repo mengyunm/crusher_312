@@ -368,7 +368,10 @@ generateLeaps b n =
 
 stateSearch :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> Int -> Int -> Board
 stateSearch board history grid slides jumps player depth num
-    | (gameOver board history num) = board
+	| gameOver board history num = board
+	| depth == 0 = board
+	-- heuristic is boardEvaluator with partial arguments, -> player history n
+	| otherwise minimax (generateTree board history grid slides jumps players depth num) (boardEvaluator player history n)
 
 --
 -- generateTree
@@ -573,7 +576,7 @@ minimax (Node _ b children) heuristic =
     in findNextBoard (findMax listofscores) (zip children listofscores)
 
 -- Since the designed player is MaxPlayer, find the next board with max score
--- findNextBoard find the board in children with ma =x score
+-- findNextBoard find the board in children with max score
 findNextBoard :: Int -> [(BoardTree, Int)] -> Board
 findNextBoard maxscore (((Node _ b _),s):rest)
     | s == maxscore = b
@@ -601,7 +604,7 @@ findNextBoard maxscore (((Node _ b _),s):rest)
 --
 
 minimax' :: BoardTree -> (Board -> Bool -> Int) -> Bool -> Int
--- base case is a Leaf -> (Node _ _ [])
+-- base case is a Leaf -> (Node _ _ []), just use heuristic to calculate its score
 -- heuristic is boardEvaluator player history n
 -- thus need myTurn and board -> maxPlayer and board here
 minimax' (Node _ board []) heuristic maxPlayer = heuristic board maxPlayer
@@ -609,6 +612,7 @@ minimax' (Node _ board nextboards) heuristic maxPlayer
 -- at each depth the player is (...Max Min Max Min...)
     | maxPlayer = findMax (map (\bt -> minimax' bt heuristic False) nextboards)
     | otherwise =  findMin (map (\bt -> minimax' bt heuristic True) nextboards)
+
 
 findMax :: [Int] -> Int
 findMax lst = foldl (\acc x -> if x > acc then x else acc) (head lst) lst
