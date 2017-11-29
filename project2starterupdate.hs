@@ -130,10 +130,10 @@ type Move = (Point,Point)
 run = crusher ["W------------BB-BBB","----W--------BB-BBB","-W-----------BB-BBB"] 'W' 2 3
 grid0 = generateGrid 3 2 4 []
 slides0 = generateSlides grid0 3
---jumps0 = generateLeaps grid0 3
+jumps0 = generateLeaps grid0 3
 board0 = sTrToBoard "WWW-WW-------BB-BBB"
 --newBoards0 = generateNewStates board0 [] grid0 slides0 jumps0 W
---tree0 = generateTree board0 [] grid0 slides0 jumps0 W 4 3
+tree0 = generateTree board0 [] grid0 slides0 jumps0 W 4 3
 --heuristic0 = boardEvaluator W [] 3
 
 --
@@ -371,7 +371,7 @@ stateSearch board history grid slides jumps player depth num
     | gameOver board history num = board
     | depth == 0 = board
     -- heuristic is boardEvaluator with partial arguments, -> player history n
-    | otherwise minimax (generateTree board history grid slides jumps players depth num) (boardEvaluator player history n)
+    | otherwise = minimax (generateTree board history grid slides jumps player depth num) (boardEvaluator player history num)
 
 --
 -- generateTree
@@ -392,10 +392,15 @@ stateSearch board history grid slides jumps player depth num
 -- -- n: an Integer representing the dimensions of the board
 --
 -- Returns: the corresponding BoardTree generated till specified depth
---
 
---generateTree :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> Int -> Int -> BoardTree
---generateTree board history grid slides jumps player depth n = -- To Be Completed
+generateTree :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> Int -> Int -> BoardTree
+generateTree board history grid slides jumps player depth n = generateTreeHelper board history grid slides jumps player depth 0 n
+ 
+generateTreeHelper board history grid slides jumps player depth currDepth n
+ | (currDepth == depth) = (Node currDepth board [])
+ | (gameOver board history n) = (Node currDepth board [])
+ | otherwise = (Node currDepth board childNodes) 
+	where childNodes =  [generateTreeHelper x (board:history) grid slides jumps player depth (currDepth + 1) n | x <- (generateNewStates board history grid slides jumps player)]
 
 --
 -- generateNewStates
