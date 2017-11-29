@@ -400,7 +400,7 @@ generateTreeHelper board history grid slides jumps player depth currDepth n
  | (currDepth == depth) = (Node currDepth board [])
  | (gameOver board history n) = (Node currDepth board [])
  | otherwise = (Node currDepth board childNodes) 
-	where childNodes =  [generateTreeHelper x (board:history) grid slides jumps player depth (currDepth + 1) n | x <- (generateNewStates board history grid slides jumps player)]
+    where childNodes =  [generateTreeHelper x (board:history) grid slides jumps player depth (currDepth + 1) n | x <- (generateNewStates board history grid slides jumps player)]
 
 --
 -- generateNewStates
@@ -442,7 +442,7 @@ generateTreeHelper board history grid slides jumps player depth currDepth n
 
 generateNewStates :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> [Board]
 generateNewStates board history grid slides jumps player = -- To Be Completed
--- applies moves to the current board to generate a list of next boards
+-- applies moves to the current board to generate a list of next boards
     checkBoard (nextBoard state move player) history
         where
             -- need to generates a list of valud move
@@ -461,8 +461,17 @@ checkBoard board history = [b | b <- board, (not (b `elem` history))]
 -- --     if player = W chooses it's piece for example (W,(0,0)) and moves to a new location on board/grid
 -- --	  the new state of the board will change (D, (0,0)) and add (W, to a new point)
 nextBoard :: State -> [Move] -> Piece -> [Board]
-nextBoard state move player = []
+nextBoard state move player = [[(helperNextBoard player from to piece point)]|(from,to)<-move, (piece,point)<-state]
 
+history0W = [sTrToBoard "-WWWWW-------BB-BBB",sTrToBoard "WWW-WW-------BB-BBB"]
+
+--helperNextBoard :: Piece -> Point -> Point -> Piece -> Point -> Board
+helperNextBoard player from to piece point
+    -- (D,from)
+    |(from == point) = D
+    -- (W, to)
+    |(to == point) = player
+    | otherwise = piece
 -- notes for getState:
 -- -- list of Tile = (Piece, Point)
 -- -- zipping the board and the grid together
