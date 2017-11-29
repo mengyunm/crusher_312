@@ -136,6 +136,13 @@ newBoards0 = generateNewStates board0 [] grid0 slides0 jumps0 W
 tree0 = generateTree board0 [] grid0 slides0 jumps0 W 4 3
 heuristic0 = boardEvaluator W [] 3
 
+-- crusher ["WWW-WW-------BB-BBB"] p d n
+-- use it to record last result
+run2 = crusher ["WWW-WW-------BB-BBB"] 'W' 2 3
+run3 = crusher ["WWW-WW-------BB-BBB"] 'W' 4 3
+run4 = crusher ["WWW-WW-------BB-BBB"] 'B' 2 3
+
+
 --
 -- crusher
 --
@@ -467,7 +474,7 @@ checkBoard board history = [b | b <- board, (not (b `elem` history))]
 -- --     if player = W chooses it's piece for example (W,(0,0)) and moves to a new location on board/grid
 -- --	  the new state of the board will change (D, (0,0)) and add (W, to a new point)
 nextBoard :: State -> [Move] -> Piece -> [Board]
-nextBoard state move player = map (\(from,to) -> (nextBoardState state player from to)) move 
+nextBoard state move player = map (\(from,to) -> (nextBoardState state player from to)) move
 
 nextBoardState :: State -> Piece -> Point -> Point -> Board
 nextBoardState state player from to = map (\(piece,point) -> helperNextBoard player from to piece point) state
