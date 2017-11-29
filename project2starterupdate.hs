@@ -316,12 +316,6 @@ isValidSlideLoc b np
  | (np `elem` b) = True
  | otherwise = False
 
-
-
-
-
- -- To Be Completed
-
 --
 -- generateLeaps
 --
@@ -453,7 +447,7 @@ generateTreeHelper board history grid slides jumps player depth currDepth n
 -- | player == W =
 
 generateNewStates :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> [Board]
-generateNewStates board history grid slides jumps player = -- To Be Completed
+generateNewStates board history grid slides jumps player =
 -- applies moves to the current board to generate a list of next boards
     checkBoard (nextBoard state move player) history
         where
@@ -494,10 +488,6 @@ getState :: Grid -> Board -> State
 getState _ [] = []
 getState [] _ = []
 getState (point:gpr) (piece:bpr) = (piece, point): getState gpr bpr
-
---validJump
-
---[] -- To Be Completed
 
 --
 -- moveGenerator
