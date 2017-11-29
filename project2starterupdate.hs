@@ -411,13 +411,8 @@ generateTree board history grid slides jumps player depth n = generateTreeHelper
 generateTreeHelper board history grid slides jumps player depth currDepth n
  | (currDepth == depth) = (Node currDepth board [])
  | (gameOver board history n) = (Node currDepth board [])
-<<<<<<< HEAD
  | otherwise = (Node currDepth board childNodes) 
     where childNodes =  [generateTreeHelper x (board:history) grid slides jumps player depth (currDepth + 1) n | x <- (generateNewStates board history grid slides jumps player)]
-=======
- | otherwise = (Node currDepth board childNodes)
-	where childNodes =  [generateTreeHelper x (board:history) grid slides jumps player depth (currDepth + 1) n | x <- (generateNewStates board history grid slides jumps player)]
->>>>>>> a6c7feb8e2b80e92d23d352c920d85da7b333fba
 
 --
 -- generateNewStates
