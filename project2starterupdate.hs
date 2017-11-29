@@ -132,9 +132,9 @@ grid0 = generateGrid 3 2 4 []
 slides0 = generateSlides grid0 3
 jumps0 = generateLeaps grid0 3
 board0 = sTrToBoard "WWW-WW-------BB-BBB"
---newBoards0 = generateNewStates board0 [] grid0 slides0 jumps0 W
+newBoards0 = generateNewStates board0 [] grid0 slides0 jumps0 W
 tree0 = generateTree board0 [] grid0 slides0 jumps0 W 4 3
---heuristic0 = boardEvaluator W [] 3
+heuristic0 = boardEvaluator W [] 3
 
 --
 -- crusher
@@ -159,8 +159,8 @@ crusher (current:old) p d n =
 	((boardToStr nextboard):current:old)
 	where
 		nextboard = stateSearch (sTrToBoard current) (toHistory old) grid (generateSlides grid n) (generateLeaps grid n) (toPlayer p) d n
-    where
-      grid = (generateGrid n (n-1) (2*(n-1)) [])
+		  where
+			  grid = (generateGrid n (n-1) (2*(n-1)) [])
 
 -- history is a list of Board, old is a list of string, old -> history
 toHistory :: [String] -> [Board]
@@ -405,7 +405,7 @@ generateTree board history grid slides jumps player depth n = generateTreeHelper
 generateTreeHelper board history grid slides jumps player depth currDepth n
  | (currDepth == depth) = (Node currDepth board [])
  | (gameOver board history n) = (Node currDepth board [])
- | otherwise = (Node currDepth board childNodes) 
+ | otherwise = (Node currDepth board childNodes)
     where childNodes =  [generateTreeHelper x (board:history) grid slides jumps player depth (currDepth + 1) n | x <- (generateNewStates board history grid slides jumps player)]
 
 --
