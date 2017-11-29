@@ -467,12 +467,10 @@ checkBoard board history = [b | b <- board, (not (b `elem` history))]
 -- --     if player = W chooses it's piece for example (W,(0,0)) and moves to a new location on board/grid
 -- --	  the new state of the board will change (D, (0,0)) and add (W, to a new point)
 nextBoard :: State -> [Move] -> Piece -> [Board]
-nextBoard state move player = [(nextBoardState state player from to)|(from,to)<-move]
+nextBoard state move player = map (\(from,to) -> (nextBoardState state player from to)) move 
 
 nextBoardState :: State -> Piece -> Point -> Point -> Board
-nextBoardState state player from to = [helperNextBoard player from to piece point | (piece,point)<-state]
-history0W = [sTrToBoard "-WWWWW-------BB-BBB",sTrToBoard "WWW-WW-------BB-BBB"]
-
+nextBoardState state player from to = map (\(piece,point) -> helperNextBoard player from to piece point) state
 --helperNextBoard :: Piece -> Point -> Point -> Piece -> Point -> Board
 helperNextBoard player from to piece point
     -- (D,from)
