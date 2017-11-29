@@ -132,9 +132,9 @@ grid0 = generateGrid 3 2 4 []
 slides0 = generateSlides grid0 3
 jumps0 = generateLeaps grid0 3
 board0 = sTrToBoard "WWW-WW-------BB-BBB"
---newBoards0 = generateNewStates board0 [] grid0 slides0 jumps0 W
+newBoards0 = generateNewStates board0 [] grid0 slides0 jumps0 W
 tree0 = generateTree board0 [] grid0 slides0 jumps0 W 4 3
---heuristic0 = boardEvaluator W [] 3
+heuristic0 = boardEvaluator W [] 3
 
 --
 -- crusher
@@ -156,11 +156,10 @@ tree0 = generateTree board0 [] grid0 slides0 jumps0 W 4 3
 
 crusher :: [String] -> Char -> Int -> Int -> [String]
 crusher (current:old) p d n =
-	((boardToStr nextboard):current:old)
-	where
-		nextboard = stateSearch (sTrToBoard current) (toHistory old) grid (generateSlides grid n) (generateLeaps grid n) (toPlayer p) d n
+    ((boardToStr nextboard):current:old)
     where
-      grid = (generateGrid n (n-1) (2*(n-1)) [])
+        nextboard = stateSearch (sTrToBoard current) (toHistory old) grid (generateSlides grid n) (generateLeaps grid n) (toPlayer p) d n
+        grid = (generateGrid n (n-1) (2*(n-1)) [])
 
 -- history is a list of Board, old is a list of string, old -> history
 toHistory :: [String] -> [Board]
@@ -467,8 +466,10 @@ checkBoard board history = [b | b <- board, (not (b `elem` history))]
 -- --     if player = W chooses it's piece for example (W,(0,0)) and moves to a new location on board/grid
 -- --	  the new state of the board will change (D, (0,0)) and add (W, to a new point)
 nextBoard :: State -> [Move] -> Piece -> [Board]
-nextBoard state move player = [[(helperNextBoard player from to piece point)]|(from,to)<-move, (piece,point)<-state]
+nextBoard state move player = [(nextBoardState state player from to)|(from,to)<-move]
 
+nextBoardState :: State -> Piece -> Point -> Point -> Board
+nextBoardState state player from to = [helperNextBoard player from to piece point | (piece,point)<-state]
 history0W = [sTrToBoard "-WWWWW-------BB-BBB",sTrToBoard "WWW-WW-------BB-BBB"]
 
 --helperNextBoard :: Piece -> Point -> Point -> Piece -> Point -> Board
