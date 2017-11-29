@@ -368,10 +368,10 @@ generateLeaps b n =
 
 stateSearch :: Board -> [Board] -> Grid -> [Slide] -> [Jump] -> Piece -> Int -> Int -> Board
 stateSearch board history grid slides jumps player depth num
-	| gameOver board history num = board
-	| depth == 0 = board
-	-- heuristic is boardEvaluator with partial arguments, -> player history n
-	| otherwise minimax (generateTree board history grid slides jumps players depth num) (boardEvaluator player history n)
+    | gameOver board history num = board
+    | depth == 0 = board
+    -- heuristic is boardEvaluator with partial arguments, -> player history n
+    | otherwise minimax (generateTree board history grid slides jumps players depth num) (boardEvaluator player history n)
 
 --
 -- generateTree
